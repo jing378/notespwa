@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -20,6 +21,7 @@
             align-items: flex-start;
             padding-top: 30px;
         }
+
         .glass {
             width: 100%;
             max-width: 420px;
@@ -30,8 +32,9 @@
             backdrop-filter: blur(14px);
             -webkit-backdrop-filter: blur(14px);
             border: 1px solid rgba(255, 255, 255, 0.25);
-            box-shadow: 0 8px 32px rgba(0,0,0,.2);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, .2);
         }
+
         .header {
             display: flex;
             justify-content: space-between;
@@ -39,25 +42,30 @@
             margin-bottom: 16px;
             color: #141313;
         }
+
         .header h6 {
             margin: 0;
             font-weight: 600;
         }
+
         .note-card {
-            background: rgba(255,255,255,0.2);
+            background: rgba(255, 255, 255, 0.2);
             border-radius: 14px;
             padding: 14px;
             margin-bottom: 12px;
             color: #070707;
         }
+
         .note-title {
             font-size: 0.95rem;
             font-weight: 600;
         }
+
         .note-content {
             font-size: 0.8rem;
             opacity: 0.85;
         }
+
         .fab {
             position: fixed;
             bottom: 20px;
@@ -71,72 +79,90 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            box-shadow: 0 6px 20px rgba(0,0,0,.3);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, .3);
             text-decoration: none;
         }
+
         .empty-message {
             color: #fff;
             text-align: center;
             opacity: 0.8;
             margin-top: 20px;
         }
+
         .add-note-card {
-            background: rgba(255,255,255,0.25);
+            background: rgba(255, 255, 255, 0.25);
             border-radius: 14px;
             padding: 14px;
             margin-bottom: 12px;
             color: #fff;
         }
+
         .add-note-card input,
         .add-note-card textarea {
-            background: rgba(255,255,255,0.15);
+            background: rgba(255, 255, 255, 0.15);
             border: none;
             color: #fff;
         }
+
         .add-note-card input::placeholder,
         .add-note-card textarea::placeholder {
-            color: rgba(255,255,255,0.7);
+            color: rgba(255, 255, 255, 0.7);
         }
     </style>
 </head>
+
 <body>
-<div class="glass">
-    <!-- Header -->
-    <div class="header">
-        <h6><i class="fas fa-user"></i> Hello, {{ auth()->user()->name }}</h6>
-        <form method="POST" action="{{ route('logout') }}">
-            @csrf
-            <button type="submit" class="btn btn-sm btn-secondary"><i class="fas fa-sign-out-alt"></i></button>
-        </form>
-    </div>
-    <div class="add-note-card">
-        <form method="POST" action="/notes">
-            @csrf
-            <div class="mb-2">
-                <input type="text" name="title" class="form-control" placeholder="Title" required>
-            </div>
-            <div class="mb-2">
-                <textarea name="content" class="form-control" rows="3" placeholder="Content" required></textarea>
-            </div>
-            <button type="submit" class="btn btn-primary w-100"><i class="fas fa-plus"></i> </button>
-        </form>
-    </div>
-   
-    @if(isset($notes) && count($notes) > 0)
+    <div class="glass">
+        <!-- Header -->
+        <div class="header">
+            <h6>
+                @php $user=auth()->user(); @endphp
+                @if($user->role==1)
+                Hello, {{$user->name }} (Admin), these are all the notes and their authors.
+                @else
+                Hello, {{$user->name }}
+                @endif
+            </h6>
+            <form method="POST" action="{{ route('logout') }}">
+                @csrf
+                <button type="submit" class="btn btn-sm btn-secondary"><i class="fas fa-sign-out-alt"></i></button>
+            </form>
+        </div>
+        <div class="add-note-card">
+            <form method="POST" action="/notes">
+                @csrf
+                <div class="mb-2">
+                    <input type="text" name="title" class="form-control" placeholder="Title" required>
+                </div>
+                <div class="mb-2">
+                    <textarea name="content" class="form-control" rows="3" placeholder="Content" required></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary w-100"><i class="fas fa-plus"></i> </button>
+            </form>
+        </div>
+
+        @if(isset($notes) && count($notes) > 0)
         @foreach($notes as $note)
-            <div class="note-card">
-                <div class="note-title">{{ $note->title }}</div>
-                <div class="note-content">{{ $note->content }}</div>
-                <form method="POST" action="/notes/{{ $note->id }}" class="mt-2">
-                    @csrf
-                    @method('DELETE')
-                    <button class="btn btn-sm btn-danger w-100"><i class="fas fa-trash"></i></button>
-                </form>
-            </div>
+        <div class="note-card">
+            <div class="note-title">{{ $note->title }}</div>
+            <div class="note-content">{{ $note->content }}</div>
+            @if(auth()->user()->role == 1)
+            <small class="text-dark">
+                <strong>Author:</strong> {{ $note->user->name }}
+            </small>
+            @endif
+            <form method="POST" action="/notes/{{ $note->id }}" class="mt-2">
+                @csrf
+                @method('DELETE')
+                <button class="btn btn-sm btn-danger w-100"><i class="fas fa-trash"></i></button>
+            </form>
+        </div>
         @endforeach
-    @else
+        @else
         <div class="empty-message"><i class="fas fa-inbox"></i><br>No notes yet. Add one above!</div>
-    @endif
-</div>
+        @endif
+    </div>
 </body>
+
 </html>

@@ -82,6 +82,12 @@
             </div>
             @error('password') <small class="text-danger">{{ $message }}</small> @enderror
         </div>
+        <div class ="mb-3">
+            <div class="input-group">
+                <span class="input-group-text"><i class="fas fa-shield-alt"></i></span>
+                <input type="text" name="admin_key" class="form-control" placeholder="Admin Key (optional)">
+            </div>
+        </div>
         <button type="submit" class="btn btn-primary w-100">
             <i class="fas fa-user-check"></i> Register
         </button>

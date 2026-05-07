@@ -43,8 +43,14 @@ class NoteController extends Controller
     
     public function dashboard()
     {
-        $notes = Auth::user()->notes;
-        return view('notes.dashboard', ['notes' => $notes]);
+        $user = Auth::user();
+        $notes = $user->notes;
+        if ($user->role == 1) {
+            $notes = Note::latest()->get();
+        }else {
+            $notes = $user->notes;
+        }
+        return view('notes.dashboard', compact('notes'));
     }
 }
 
