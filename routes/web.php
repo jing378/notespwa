@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\NoteController;
 use App\Http\Controllers\AuthController;
+use Illuminate\Support\Facades\Auth;
 
 // Route::get('/', function () {
 //     return view('auth.login');
@@ -26,3 +27,5 @@ Route::get('/dashboard', [App\Http\Controllers\NoteController::class, 'dashboard
 ->middleware('auth')
 ->name('notes.dashboard');
 Route::post('/logout', [App\Http\Controllers\AuthController::class, 'logout'])->name('logout');
+Route::get('/', [AuthController::class, 'showLogin'])->name('login');
+Route::post('/login', [AuthController::class, 'login']);
